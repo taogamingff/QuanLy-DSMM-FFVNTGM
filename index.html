@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Fire Wishlist Manager</title>
+
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0b1020;
+  --panel: #151e32;
+  --border: #2b3a56;
+  --text: #f2f5ff;
+  --muted: #9aa9c2;
+  --blue: #5685ff;
+  --green: #16c784;
+  --red: #ff536b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 20px 12px;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at top, #1b3260, transparent 55%),
+    var(--bg);
+  font-family: Arial, sans-serif;
+}
+
+main {
+  width: 100%;
+  max-width: 850px;
+  margin: auto;
+}
+
+header {
+  text-align: center;
+  padding: 18px 0 24px;
+}
+
+.logo {
+  display: inline-grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #5685ff, #9b5cff);
+  font-size: 32px;
+}
+
+h1 { font-size: 25px; margin: 14px 0 8px; }
+h2 { font-size: 18px; margin: 0 0 18px; }
+
+.sub, .hint {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.card {
+  margin-bottom: 16px;
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.field { margin-bottom: 15px; }
+
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  color: var(--text);
+  background: #0b1222;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  outline: none;
+  font-size: 14px;
+}
+
+input:focus, textarea:focus { border-color: var(--blue); }
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+button {
+  padding: 12px;
+  min-height: 42px;
+  border: 0;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:disabled { opacity: .55; cursor: wait; }
+
+.blue { color: white; background: var(--blue); }
+.green { color: #042519; background: var(--green); }
+.red { color: white; background: var(--red); }
+.gray { color: white; background: #30415f; }
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.filebox {
+  padding: 15px;
+  border: 1px dashed #52678e;
+  border-radius: 10px;
+  background: #0d1527;
+  text-align: center;
+}
+
+.filebox input { margin-top: 12px; }
+
+.status {
+  display: none;
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 9px;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.status.show { display: block; }
+.status.info { background: #21365a; }
+.status.ok { background: #124632; }
+.status.error { background: #562332; }
+
+.listtop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.badge {
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: #25395d;
+  color: #c7d8ff;
+  font-size: 12px;
+}
+
+.items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  gap: 12px;
+}
+
+.item {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #1b2941;
+  text-align: center;
+}
+
+.item img, .placeholder {
+  width: 80px;
+  height: 80px;
+  margin: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #0b1222;
+}
+
+.placeholder {
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+}
+
+.item small {
+  display: block;
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+.item strong {
+  display: block;
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+
+.item button {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.empty {
+  padding: 24px 12px;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+  padding: 8px 0 24px;
+}
+
+@media (max-width: 480px) {
+  .card { padding: 15px; }
+  h1 { font-size: 22px; }
+  .items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+</style>
+</head>
+
+<body>
+<main>
+  <header>
+    <div class="logo">★</div>
+    <h1>WISHLIST MANAGER</h1>
+    <div class="sub">FREE FIRE · QUẢN LÝ VẬT PHẨM</div>
+  </header>
+
+  <section class="card">
+    <h2>📂 Tài khoản</h2>
+
+    <div class="filebox">
+      <strong>Chọn tệp tài khoản DAT / JSON</strong>
+      <div class="hint">
+        Tệp phải chứa JSON thuần để tự nhận UID và password.
+        Tệp được đọc ngay trên trình duyệt.
+      </div>
+      <input id="file" type="file" accept=".dat,.json,application/json">
+    </div>
+
+    <div class="field" style="margin-top:18px">
+      <label for="uid">UID</label>
+      <input id="uid" inputmode="numeric" placeholder="Nhập UID">
+    </div>
+
+    <div class="field">
+      <label for="password">Guest Password</label>
+      <input id="password" type="password"
+             placeholder="Nhập Guest Password" autocomplete="off">
+    </div>
+
+    <button class="gray" id="toggle" type="button">Hiện / Ẩn Password</button>
+    <div id="accountStatus" class="status"></div>
+  </section>
+
+  <section class="card">
+    <h2>🎯 ID vật phẩm</h2>
+
+    <div class="field">
+      <label for="ids">Danh sách IDItem</label>
+      <textarea id="ids"
+        placeholder="Nhập ID, mỗi dòng một ID&#10;Ví dụ:&#10;1001&#10;1002&#10;1003"></textarea>
+      <div class="hint">Có thể phân cách bằng dấu phẩy, dấu chấm phẩy hoặc xuống dòng.</div>
+    </div>
+
+    <div class="actions">
+      <button class="green" id="add" type="button">＋ Thêm Wishlist</button>
+      <button class="red" id="remove" type="button">− Xóa Wishlist</button>
+    </div>
+
+    <div id="apiStatus" class="status"></div>
+  </section>
+
+  <section class="card">
+    <div class="listtop">
+      <h2 style="margin:0">📋 Danh sách vật phẩm</h2>
+      <span class="badge" id="count">0 vật phẩm</span>
+    </div>
+
+    <div class="hint" style="margin-bottom:14px">
+      Danh sách được lưu cục bộ trong trình duyệt. Đây chưa phải danh sách
+      tự đồng bộ từ game. Muốn hiển thị icon thật, cần có URL ảnh tương ứng.
+    </div>
+
+    <div id="items" class="items"></div>
+    <div id="empty" class="empty">
+      Chưa có vật phẩm.<br>Nhập ID ở trên để bắt đầu.
+    </div>
+
+    <div class="actions" style="margin-top:15px">
+      <button class="blue" id="save" type="button">💾 Lưu danh sách</button>
+      <button class="gray" id="clear" type="button">Xóa danh sách cục bộ</button>
+    </div>
+  </section>
+
+  <footer>
+    Wishlist Manager · Phiên bản HTML độc lập<br>
+    Không cần Node.js hoặc Terminal.
+  </footer>
+</main>
+
+<script>
+"use strict";
+
+const API = "https://danger-wishlist-manager.vercel.app";
+const $ = id => document.getElementById(id);
+
+function status(id, message, type = "info") {
+  const el = $(id);
+  el.className = "status show " + type;
+  el.textContent = message;
+}
+
+function getIds() {
+  return [...new Set(
+    $("ids").value.trim()
+      .split(/[,\s;]+/)
+      .map(x => x.trim())
+      .filter(Boolean)
+  )];
+}
+
+function saveLocal() {
+  try {
+    localStorage.setItem("ff-wishlist-ids", JSON.stringify(getIds()));
+    status("apiStatus", "Đã lưu danh sách ID trên trình duyệt.", "ok");
+  } catch {
+    status("apiStatus", "Không thể lưu dữ liệu trên trình duyệt.", "error");
+  }
+}
+
+function render() {
+  const ids = getIds();
+  const root = $("items");
+
+  root.replaceChildren();
+  $("count").textContent = ids.length + " vật phẩm";
+  $("empty").style.display = ids.length ? "none" : "block";
+
+  for (const id of ids) {
+    const card = document.createElement("article");
+    card.className = "item";
+
+    const placeholder = document.createElement("div");
+    placeholder.className = "placeholder";
+    placeholder.textContent = "🎁";
+
+    const small = document.createElement("small");
+    small.textContent = "ID VẬT PHẨM";
+
+    const strong = document.createElement("strong");
+    strong.textContent = id;
+
+    const btn = document.createElement("button");
+    btn.className = "gray";
+    btn.textContent = "Bỏ khỏi danh sách";
+
+    btn.addEventListener("click", () => {
+      $("ids").value = getIds().filter(x => x !== id).join("\n");
+      render();
+      saveLocal();
+    });
+
+    card.append(placeholder, small, strong, btn);
+    root.append(card);
+  }
+}
+
+$("ids").addEventListener("input", render);
+
+$("toggle").addEventListener("click", () => {
+  $("password").type =
+    $("password").type === "password" ? "text" : "password";
+});
+
+$("file").addEventListener("change", async event => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  try {
+    const json = JSON.parse(await file.text());
+    const info = json?.guest_account_info;
+    const uid = info?.["com.garena.msdk.guest_uid"];
+    const password = info?.["com.garena.msdk.guest_password"];
+
+    if (!uid || !password) {
+      throw new Error("Không tìm thấy UID/password trong JSON.");
+    }
+
+    $("uid").value = String(uid);
+    $("password").value = String(password);
+
+    status("accountStatus", "Đã nhận dạng UID và password.", "ok");
+  } catch (e) {
+    status(
+      "accountStatus",
+      e instanceof SyntaxError
+        ? "Tệp không phải JSON thuần hoặc có thể đang được mã hóa/nén."
+        : e.message,
+      "error"
+    );
+  }
+});
+
+async function requestWishlist(action) {
+  const uid = $("uid").value.trim();
+  const password = $("password").value;
+  const ids = getIds();
+
+  if (!/^\d{1,20}$/.test(uid) || !password) {
+    status("apiStatus", "Vui lòng kiểm tra UID và password.", "error");
+    return;
+  }
+
+  if (!ids.length || ids.some(id => !/^\d{1,30}$/.test(id))) {
+    status("apiStatus", "Danh sách ID trống hoặc chứa ID không hợp lệ.", "error");
+    return;
+  }
+
+  const buttons = [$("add"), $("remove")];
+  buttons.forEach(b => b.disabled = true);
+
+  try {
+    // Ánh xạ theo mô tả ban đầu của người dùng.
+    // Xác minh tên endpoint trước khi sử dụng trên tài khoản thật.
+    const endpoint = action === "add" ? "remove-wish" : "add-wish";
+
+    const url = new URL(endpoint, API);
+    url.searchParams.set("uid", uid);
+    url.searchParams.set("password", password);
+    url.searchParams.set("item_ids", ids.join(","));
+
+    status("apiStatus", "Đang gửi yêu cầu đến API...", "info");
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: { "Accept": "application/json" }
+    });
+
+    const text = await response.text();
+
+    if (!response.ok) {
+      throw new Error("API trả về HTTP " + response.status + ": " + text.slice(0, 300));
+    }
+
+    status(
+      "apiStatus",
+      "API phản hồi HTTP " + response.status + ". Nội dung: " + text.slice(0, 1000),
+      "ok"
+    );
+  } catch (e) {
+    const corsLikely = e instanceof TypeError;
+
+    status(
+      "apiStatus",
+      corsLikely
+        ? "Không thể đọc phản hồi API. Có thể máy chủ chặn CORS hoặc thiết bị đang mất kết nối. Hãy kiểm tra API từ trình duyệt."
+        : "Yêu cầu thất bại: " + e.message,
+      "error"
+    );
+  } finally {
+    buttons.forEach(b => b.disabled = false);
+  }
+}
+
+$("add").addEventListener("click", () => requestWishlist("add"));
+$("remove").addEventListener("click", () => requestWishlist("remove"));
+$("save").addEventListener("click", saveLocal);
+
+$("clear").addEventListener("click", () => {
+  if (!confirm("Xóa toàn bộ danh sách ID đã lưu trên trình duyệt?")) return;
+
+  $("ids").value = "";
+  localStorage.removeItem("ff-wishlist-ids");
+  render();
+  status("apiStatus", "Đã xóa danh sách ID cục bộ.", "ok");
+});
+
+try {
+  const saved = JSON.parse(localStorage.getItem("ff-wishlist-ids") || "[]");
+  if (Array.isArray(saved)) $("ids").value = saved.join("\n");
+} catch {}
+
+render();
+</script>
+</body>
+  </html>
